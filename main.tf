@@ -1,21 +1,14 @@
 provider "aws" {
-    region = "ap-south-1"  
+  region = "ap-south-1"
 }
 
-resource "aws_instance" "myInstance" {
-  ami           = "ami-05c0f5389589545b7"
-  instance_type = "t2.micro"
-  key_name      = "demo-key"     
-  tags = {
-      Name = "TF-Instance"
-  }
-}
-
-# Define your S3 backend to save the state file in an S3 bucket
-terraform {
-  backend "s3" {
-    bucket = "pavanssonixbucket1"
-    key    = "terraform.tfstate"
-    region = "ap-south-1"  # Specify the AWS region for your S3 bucket
-  }
+resource "aws_instance" "example" {
+  ami                    = var.ami
+  instance_type          = var.instance_type
+  availability_zone      = var.availability_zone
+  iam_instance_profile   = var.iam_instance_profile
+  key_name               = var.key_name
+  security_groups        = var.security_groups
+  subnet_id              = var.subnet_id
+  tags                   = var.tags
 }
