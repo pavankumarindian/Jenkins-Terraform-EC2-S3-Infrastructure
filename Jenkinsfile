@@ -1,54 +1,53 @@
 pipeline {
+    agent any
 
-    parameters {
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    } 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_REGION = 'ap-south-1'
+        S3_BUCKET = 'pavanssonixbucket1'
+        TF_VAR_key_name = 'demo-key'
+        TF_VAR_instance_type = 't2.micro'
+        GITHUB_REPO_URL = 'https://github.com/pavankumarindian/Jenkins-Terraform-EC2-S3-Infrastructure.git'
     }
 
-   agent  any
     stages {
-        stage('checkout') {
+        stage('Checkout') {
             steps {
-                 script{
-                        dir("terraform")
-                        {
-                            git branch: 'main', url: "https://github.com/pavankumarindian/Jenkins-Terraform-EC2-S3-Infrastructure.git"
-                        }
-                    }
+                script {
+                    git branch: 'main', url: GITHUB_REPO_URL
                 }
             }
+        }
 
-        stage('Plan') {
+        stage('Terraform Init') {
             steps {
-                sh 'pwd;cd terraform/ ; terraform init'
-                sh "pwd;cd terraform/ ; terraform plan -out tfplan"
-                sh 'pwd;cd terraform/ ; terraform show -no-color tfplan > tfplan.txt'
+                script {
+                    sh 'terraform init -input=false'
+                }
             }
         }
-        stage('Approval') {
-           when {
-               not {
-                   equals expected: true, actual: params.autoApprove
-               }
-           }
 
-           steps {
-               script {
-                    def plan = readFile 'terraform/tfplan.txt'
-                    input message: "Do you want to apply the plan?",
-                    parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-               }
-           }
-       }
-
-        stage('Apply') {
+        stage('Terraform Plan') {
             steps {
-                sh "pwd;cd terraform/ ; terraform apply -input=false tfplan"
+                script {
+                    sh "terraform plan \
+                        -var 'region=${AWS_REGION}' \
+                        -var 's3_bucket=${S3_BUCKET}' \
+                        -var 'key_name=${TF_VAR_key_name}' \
+                        -var 'instance_type=${TF_VAR_instance_type}'"
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                script {
+                    sh "terraform apply -auto-approve \
+                        -var 'region=${AWS_REGION}' \
+                        -var 's3_bucket=${S3_BUCKET}' \
+                        -var 'key_name=${TF_VAR_key_name}' \
+                        -var 'instance_type=${TF_VAR_instance_type}'"
+                }
             }
         }
     }
-
-  }
+}
