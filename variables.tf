@@ -42,3 +42,13 @@ variable "tags" {
     Environment = "Dev"
   }
 }
+
+variable "region" {
+  type    = string
+  default = "ap-south-1"
+}
+
+variable "s3_bucket" {
+  type    = string
+  default = "pavanssonixbucket1"
+}
