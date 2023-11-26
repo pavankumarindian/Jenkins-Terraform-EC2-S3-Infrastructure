@@ -28,22 +28,10 @@ pipeline {
             }
         }
 
-        stage('Terraform Plan') {
+        stage('Terraform Destroy') {
             steps {
                 script {
-                    sh "terraform plan \
-                        -var 'region=${TF_region}' \
-                        -var 's3_bucket=${TF_bucket}' \
-                        -var 'key_name=${TF_VAR_key_name}' \
-                        -var 'instance_type=${TF_VAR_instance_type}'"
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                script {
-                    sh "terraform apply -auto-approve \
+                    sh "terraform destroy \
                         -var 'region=${TF_region}' \
                         -var 's3_bucket=${TF_bucket}' \
                         -var 'key_name=${TF_VAR_key_name}' \
