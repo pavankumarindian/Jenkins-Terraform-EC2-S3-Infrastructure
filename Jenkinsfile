@@ -31,7 +31,7 @@ pipeline {
         stage('Terraform Destroy') {
             steps {
                 script {
-                    sh "terraform destroy \
+                    sh "terraform destroy -auto-approve \
                         -var 'region=${TF_region}' \
                         -var 's3_bucket=${TF_bucket}' \
                         -var 'key_name=${TF_VAR_key_name}' \
