@@ -4,8 +4,8 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_REGION = 'ap-south-1'
-        S3_BUCKET = 'pavanssonixbucket1'
+        TF_region = 'ap-south-1'
+        TF_bucket = 'pavanssonixbucket1'
         TF_VAR_key_name = 'demo-key'
         TF_VAR_instance_type = 't2.micro'
         GITHUB_REPO_URL = 'https://github.com/pavankumarindian/Jenkins-Terraform-EC2-S3-Infrastructure.git'
@@ -32,8 +32,8 @@ pipeline {
             steps {
                 script {
                     sh "terraform plan \
-                        -var 'region=${AWS_REGION}' \
-                        -var 's3_bucket=${S3_BUCKET}' \
+                        -var 'region=${TF_region}' \
+                        -var 's3_bucket=${TF_bucket}' \
                         -var 'key_name=${TF_VAR_key_name}' \
                         -var 'instance_type=${TF_VAR_instance_type}'"
                 }
@@ -44,8 +44,8 @@ pipeline {
             steps {
                 script {
                     sh "terraform apply -auto-approve \
-                        -var 'region=${AWS_REGION}' \
-                        -var 's3_bucket=${S3_BUCKET}' \
+                        -var 'region=${TF_region}' \
+                        -var 's3_bucket=${TF_bucket}' \
                         -var 'key_name=${TF_VAR_key_name}' \
                         -var 'instance_type=${TF_VAR_instance_type}'"
                 }
