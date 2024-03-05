@@ -35,7 +35,7 @@ Before you get started, make sure you have the following prerequisites in place:
 
 ## Getting Started
 
-    To start using this repository, follow these steps:
+    To start using this repository, follow these below steps:
 
    **Clone the Repository:**
 
